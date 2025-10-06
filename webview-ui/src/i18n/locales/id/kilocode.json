@@ -53,8 +53,10 @@
 				},
 				"dataCollection": {
 					"default": "Tidak ada kebijakan data yang ditetapkan",
-					"allow": "Izinkan pengumpulan data penyedia",
-					"deny": "Tolak pengumpulan data penyedia"
+					"allowFree": "Izinkan pelatihan prompt (hanya gratis)",
+					"allow": "Izinkan pelatihan prompt",
+					"deny": "Tolak pelatihan prompt",
+					"zdr": "Retensi data nol"
 				}
 			}
 		},

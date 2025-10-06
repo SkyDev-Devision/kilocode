@@ -12,6 +12,7 @@ import {
 	doubaoModels,
 	featherlessModels,
 	fireworksModels,
+	syntheticModels, // kilocode_change
 	geminiModels,
 	groqModels,
 	ioIntelligenceModels,
@@ -139,6 +140,7 @@ export const providerNames = [
 	"kilocode",
 	"gemini-cli",
 	"virtual-quota-fallback",
+	"synthetic",
 	// kilocode_change end
 	"sambanova",
 	"vertex",
@@ -225,6 +227,7 @@ const openRouterSchema = baseProviderSettingsSchema.extend({
 	// kilocode_change start
 	openRouterProviderDataCollection: openRouterProviderDataCollectionSchema.optional(),
 	openRouterProviderSort: openRouterProviderSortSchema.optional(),
+	openRouterZdr: z.boolean().optional(),
 	// kilocode_change end
 })
 
@@ -402,6 +405,7 @@ const kilocodeSchema = baseProviderSettingsSchema.extend({
 	openRouterSpecificProvider: z.string().optional(),
 	openRouterProviderDataCollection: openRouterProviderDataCollectionSchema.optional(),
 	openRouterProviderSort: openRouterProviderSortSchema.optional(),
+	openRouterZdr: z.boolean().optional(),
 	kilocodeTesterWarningsDisabledUntil: z.number().optional(), // Timestamp for disabling KILOCODE-TESTER warnings
 })
 
@@ -436,6 +440,12 @@ const zaiSchema = apiModelIdProviderModelSchema.extend({
 const fireworksSchema = apiModelIdProviderModelSchema.extend({
 	fireworksApiKey: z.string().optional(),
 })
+
+// kilocode_change start
+const syntheticSchema = apiModelIdProviderModelSchema.extend({
+	syntheticApiKey: z.string().optional(),
+})
+// kilocode_change end
 
 const featherlessSchema = apiModelIdProviderModelSchema.extend({
 	featherlessApiKey: z.string().optional(),
@@ -490,6 +500,7 @@ export const providerSettingsSchemaDiscriminated = z.discriminatedUnion("apiProv
 	geminiCliSchema.merge(z.object({ apiProvider: z.literal("gemini-cli") })),
 	kilocodeSchema.merge(z.object({ apiProvider: z.literal("kilocode") })),
 	virtualQuotaFallbackSchema.merge(z.object({ apiProvider: z.literal("virtual-quota-fallback") })),
+	syntheticSchema.merge(z.object({ apiProvider: z.literal("synthetic") })),
 	// kilocode_change end
 	groqSchema.merge(z.object({ apiProvider: z.literal("groq") })),
 	huggingFaceSchema.merge(z.object({ apiProvider: z.literal("huggingface") })),
@@ -524,6 +535,7 @@ export const providerSettingsSchema = z.object({
 	...geminiCliSchema.shape,
 	...kilocodeSchema.shape,
 	...virtualQuotaFallbackSchema.shape,
+	...syntheticSchema.shape,
 	// kilocode_change end
 	...openAiNativeSchema.shape,
 	...mistralSchema.shape,
@@ -632,6 +644,7 @@ export const modelIdKeysByProvider: Record<TypicalProvider, ModelIdKey> = {
 	sambanova: "apiModelId",
 	zai: "apiModelId",
 	fireworks: "apiModelId",
+	synthetic: "apiModelId", // kilocode_change
 	featherless: "apiModelId",
 	"io-intelligence": "ioIntelligenceModelId",
 	roo: "apiModelId",
@@ -709,6 +722,13 @@ export const MODELS_BY_PROVIDER: Record<
 		label: "Fireworks",
 		models: Object.keys(fireworksModels),
 	},
+	// kilocode_change start
+	synthetic: {
+		id: "synthetic",
+		label: "Synthetic",
+		models: Object.keys(syntheticModels),
+	},
+	// kilocode_change end
 	gemini: {
 		id: "gemini",
 		label: "Google Gemini",

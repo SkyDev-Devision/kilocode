@@ -53,8 +53,10 @@
 				},
 				"dataCollection": {
 					"default": "No hi ha política de dades establerta",
-					"allow": "Permetre la recol·lecció de dades del proveïdor",
-					"deny": "Denegar la recol·lecció de dades del proveïdor"
+					"allowFree": "Permetre entrenament de prompts (només gratuït)",
+					"allow": "Permetre entrenament de prompts",
+					"deny": "Denegar entrenament de prompts",
+					"zdr": "Retenció zero de dades"
 				}
 			}
 		},

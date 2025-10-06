@@ -33,6 +33,7 @@ import {
 	internationalZAiDefaultModelId,
 	mainlandZAiDefaultModelId,
 	fireworksDefaultModelId,
+	syntheticDefaultModelId, // kilocode_change
 	featherlessDefaultModelId,
 	ioIntelligenceDefaultModelId,
 	rooDefaultModelId,
@@ -96,6 +97,7 @@ import {
 	// kilocode_change start
 	GeminiCli,
 	VirtualQuotaFallbackProvider,
+	Synthetic,
 	// kilocode_change end
 	ZAi,
 	Fireworks,
@@ -120,7 +122,6 @@ import { BedrockCustomArn } from "./providers/BedrockCustomArn"
 import { KiloCode } from "../kilocode/settings/providers/KiloCode" // kilocode_change
 import { buildDocLink } from "@src/utils/docLinks"
 import { KiloProviderRouting, KiloProviderRoutingManagedByOrganization } from "./providers/KiloProviderRouting"
-import { OpenRouterMarkupInfoView } from "../kilocode/FreeModelsLink"
 
 export interface ApiOptionsProps {
 	uriScheme: string | undefined
@@ -372,6 +373,7 @@ const ApiOptions = ({
 							: internationalZAiDefaultModelId,
 				},
 				fireworks: { field: "apiModelId", default: fireworksDefaultModelId },
+				synthetic: { field: "apiModelId", default: syntheticDefaultModelId }, // kilocode_change
 				featherless: { field: "apiModelId", default: featherlessDefaultModelId },
 				"io-intelligence": { field: "ioIntelligenceModelId", default: ioIntelligenceDefaultModelId },
 				roo: { field: "apiModelId", default: rooDefaultModelId },
@@ -467,14 +469,6 @@ const ApiOptions = ({
 					data-testid="provider-select"
 				/>
 			</div>
-
-			{
-				// kilocode_change start
-				selectedProvider === "openrouter" && (
-					<OpenRouterMarkupInfoView setApiConfigurationField={setApiConfigurationField} />
-				)
-				// kilocode_change end
-			}
 
 			{errorMessage && <ApiErrorMessage errorMessage={errorMessage} />}
 
@@ -717,6 +711,16 @@ const ApiOptions = ({
 			{selectedProvider === "fireworks" && (
 				<Fireworks apiConfiguration={apiConfiguration} setApiConfigurationField={setApiConfigurationField} />
 			)}
+			{
+				// kilocode_change start
+				selectedProvider === "synthetic" && (
+					<Synthetic
+						apiConfiguration={apiConfiguration}
+						setApiConfigurationField={setApiConfigurationField}
+					/>
+				)
+				// kilocode_change end
+			}
 
 			{selectedProvider === "roo" && (
 				<div className="flex flex-col gap-3">

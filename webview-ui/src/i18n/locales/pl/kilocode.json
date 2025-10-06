@@ -52,8 +52,10 @@
 				},
 				"dataCollection": {
 					"default": "Brak ustawionej polityki danych",
-					"allow": "Zezwól na gromadzenie danych przez dostawcę",
-					"deny": "Zabroń gromadzenia danych przez dostawcę"
+					"allowFree": "Zezwól na trening promptów (tylko darmowe)",
+					"allow": "Zezwól na trening promptów",
+					"deny": "Zabroń treningu promptów",
+					"zdr": "Zerowe przechowywanie danych"
 				}
 			},
 			"automaticFetch": "Najnowsze modele są automatycznie dostępne w Kilo Code. Jeśli nie jesteś pewien, który model wybrać, Kilo Code działa najlepiej z zalecanymi modelami wymienionymi na górze <strong>pogrubioną czcionką</strong>."

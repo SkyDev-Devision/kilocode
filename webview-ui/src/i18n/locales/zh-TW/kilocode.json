@@ -67,8 +67,10 @@
 				},
 				"dataCollection": {
 					"default": "未設定資料政策",
-					"allow": "允許供應商資料收集",
-					"deny": "拒絕供應商資料收集"
+					"allowFree": "允許提示詞訓練（僅免費）",
+					"allow": "允許提示詞訓練",
+					"deny": "拒絕提示詞訓練",
+					"zdr": "零資料保留"
 				}
 			},
 			"automaticFetch": "最新模型會自動在 Kilo Code 中提供。如果您不確定要選擇哪個模型，Kilo Code 與列在頂部<strong>粗體</strong>顯示的推薦模型搭配使用效果最佳。"

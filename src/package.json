@@ -3,7 +3,7 @@
 	"displayName": "%extension.displayName%",
 	"description": "%extension.description%",
 	"publisher": "kilocode",
-	"version": "4.98.2",
+	"version": "4.99.2",
 	"icon": "assets/icons/logo-outline-black.png",
 	"galleryBanner": {
 		"color": "#FFFFFF",
@@ -33,7 +33,6 @@
 		"Testing"
 	],
 	"keywords": [
-		"cline",
 		"claude",
 		"dev",
 		"mcp",
@@ -46,9 +45,7 @@
 		"ai",
 		"llama",
 		"Kilo Code",
-		"kilocode",
-		"roo code",
-		"roocode"
+		"kilocode"
 	],
 	"activationEvents": [
 		"onLanguage",
@@ -606,7 +603,7 @@
 					"type": "number",
 					"default": 600,
 					"minimum": 0,
-					"maximum": 3600,
+					"maximum": 86400,
 					"description": "%settings.apiRequestTimeout.description%"
 				},
 				"kilo-code.newTaskRequireTodos": {
@@ -741,6 +738,7 @@
 		"@roo-code/config-eslint": "workspace:^",
 		"@roo-code/config-typescript": "workspace:^",
 		"@types/clone-deep": "^4.0.4",
+		"dotenv": "^16.4.7",
 		"@types/debug": "^4.1.12",
 		"@types/diff": "^5.2.3",
 		"@types/diff-match-patch": "^1.0.36",

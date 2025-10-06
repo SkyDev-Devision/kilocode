@@ -60,8 +60,10 @@
 				},
 				"dataCollection": {
 					"default": "Geen databeleid ingesteld",
-					"allow": "Sta dataverzameling door provider toe",
-					"deny": "Weiger dataverzameling door provider"
+					"allowFree": "Sta prompt-training toe (alleen gratis)",
+					"allow": "Sta prompt-training toe",
+					"deny": "Weiger prompt-training",
+					"zdr": "Geen gegevensbewaring"
 				}
 			}
 		},

@@ -59,8 +59,10 @@
 				},
 				"dataCollection": {
 					"default": "Veri politikası ayarlanmamış",
-					"allow": "Sağlayıcı veri toplamaya izin ver",
-					"deny": "Sağlayıcı veri toplamayı reddet"
+					"allowFree": "Prompt eğitimine izin ver (sadece ücretsiz)",
+					"allow": "Prompt eğitimine izin ver",
+					"deny": "Prompt eğitimini reddet",
+					"zdr": "Sıfır veri saklama"
 				}
 			}
 		},

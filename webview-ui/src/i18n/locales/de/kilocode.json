@@ -60,8 +60,10 @@
 				},
 				"dataCollection": {
 					"default": "Keine Datenrichtlinie festgelegt",
-					"allow": "Anbieter-Datensammlung erlauben",
-					"deny": "Anbieter-Datensammlung verweigern"
+					"allowFree": "Prompt-Training erlauben (nur kostenlos)",
+					"allow": "Prompt-Training erlauben",
+					"deny": "Prompt-Training verweigern",
+					"zdr": "Keine Datenspeicherung"
 				}
 			}
 		},
