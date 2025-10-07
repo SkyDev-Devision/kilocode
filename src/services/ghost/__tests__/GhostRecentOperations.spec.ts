@@ -116,7 +116,7 @@ describe("GhostRecentOperations", () => {
 		expect(enrichedContext.recentOperations?.length).toBeGreaterThan(0)
 
 		// Generate prompt
-		const prompt = strategy.getSuggestionPrompt(enrichedContext)
+		const prompt = strategy.getUserPrompt(enrichedContext)
 
 		// Verify that the prompt includes the recent operations section
 		// The new strategy system uses "## User Request" format
@@ -133,7 +133,7 @@ describe("GhostRecentOperations", () => {
 		const enrichedContext = await context.generate(suggestionContext)
 
 		// Generate prompt
-		const prompt = strategy.getSuggestionPrompt(enrichedContext)
+		const prompt = strategy.getUserPrompt(enrichedContext)
 
 		// Verify that the prompt does not include recent operations section
 		// The current document content will still be in the prompt, so we should only check

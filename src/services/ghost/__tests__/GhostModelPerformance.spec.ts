@@ -25,8 +25,8 @@ describe("GhostModelPerformance", () => {
 			document: document,
 		}
 
-		const systemPrompt = strategy.getSystemPrompt(context)
-		const suggestionPrompt = strategy.getSuggestionPrompt(context)
+		const systemPrompt = strategy.getSystemPrompt()
+		const suggestionPrompt = strategy.getUserPrompt(context)
 
 		return { systemPrompt, suggestionPrompt }
 	}

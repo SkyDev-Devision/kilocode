@@ -23,7 +23,6 @@ export class ContextAnalyzer {
 			isInlineEdit: this.isInlineEdit(context),
 			cursorLine: this.getCursorLine(context),
 			cursorPosition: context.range?.start.character || 0,
-			astNodeType: context.rangeASTNode?.type,
 		}
 
 		// Determine primary use case based on priority
@@ -82,12 +81,7 @@ export class ContextAnalyzer {
 			/<!--/, // HTML comment
 		]
 
-		const hasCommentPattern = commentPatterns.some((pattern) => pattern.test(beforeCursor))
-
-		// Also check AST node type if available
-		const isCommentNode = context.rangeASTNode?.type === "comment"
-
-		return hasCommentPattern || isCommentNode
+		return commentPatterns.some((pattern) => pattern.test(beforeCursor))
 	}
 
 	/**
@@ -152,25 +146,6 @@ export class ContextAnalyzer {
 	 * Checks if the cursor is inside a function/method
 	 */
 	isInsideFunction(context: GhostSuggestionContext): boolean {
-		if (!context.rangeASTNode) return false
-
-		const functionTypes = [
-			"function",
-			"method",
-			"function_declaration",
-			"function_expression",
-			"arrow_function",
-			"method_definition",
-		]
-
-		let node = context.rangeASTNode
-		while (node) {
-			if (functionTypes.includes(node.type)) {
-				return true
-			}
-			node = node.parent as any
-		}
-
 		return false
 	}
 
@@ -178,18 +153,6 @@ export class ContextAnalyzer {
 	 * Checks if the cursor is inside a class
 	 */
 	isInsideClass(context: GhostSuggestionContext): boolean {
-		if (!context.rangeASTNode) return false
-
-		const classTypes = ["class", "class_declaration", "class_expression"]
-
-		let node = context.rangeASTNode
-		while (node) {
-			if (classTypes.includes(node.type)) {
-				return true
-			}
-			node = node.parent as any
-		}
-
 		return false
 	}
 }

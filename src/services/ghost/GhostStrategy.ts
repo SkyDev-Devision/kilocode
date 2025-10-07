@@ -13,7 +13,7 @@ export interface IGhostStrategy {
 	 * @param context The suggestion context
 	 * @returns The user prompt
 	 */
-	getSuggestionPrompt(context: GhostSuggestionContext): string
+	getUserPrompt(context: GhostSuggestionContext): string
 
 	/**
 	 * Initialize streaming parser for incremental parsing

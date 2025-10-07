@@ -1,87 +1,9 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest"
 import * as vscode from "vscode"
 import { GhostXmlStrategy } from "../GhostXmlStrategy"
-import { GhostSuggestionContext, ASTContext } from "../types"
+import { GhostSuggestionContext } from "../types"
 import { MockTextDocument } from "../../mocking/MockTextDocument"
 import { PromptStrategyManager } from "../PromptStrategyManager"
-
-// Create a mock Node class for testing
-class MockNode {
-	id: number = 1
-	startIndex: number = 0
-	endIndex: number = 0
-	startPosition: { row: number; column: number } = { row: 0, column: 0 }
-	endPosition: { row: number; column: number } = { row: 0, column: 0 }
-	type: string = ""
-	text: string = ""
-	isNamed: boolean = true
-	tree: any = {}
-	parent: any = null
-	childCount: number = 0
-	namedChildCount: number = 0
-	firstChild: any = null
-	lastChild: any = null
-	firstNamedChild: any = null
-	lastNamedChild: any = null
-	nextSibling: any = null
-	previousSibling: any = null
-	nextNamedSibling: any = null
-	previousNamedSibling: any = null
-	_childFunction: ((index: number) => any) | null = null
-	descendantForPosition: ((startPosition: any, endPosition?: any) => any) | null = null
-
-	constructor(props: Partial<MockNode> = {}) {
-		Object.assign(this, props)
-	}
-
-	child(index: number): any {
-		if (this._childFunction) {
-			return this._childFunction(index)
-		}
-		return null
-	}
-
-	namedChild(index: number): any {
-		return null
-	}
-
-	childForFieldName(fieldName: string): any {
-		return null
-	}
-
-	childForFieldId(fieldId: number): any {
-		return null
-	}
-
-	descendantForIndex(startIndex: number, endIndex?: number): any {
-		return null
-	}
-
-	toString(): string {
-		return this.text
-	}
-
-	walk(): any {
-		return {}
-	}
-
-	namedDescendantForIndex(startIndex: number, endIndex?: number): any {
-		return null
-	}
-
-	namedDescendantForPosition(startPosition: any, endPosition?: any): any {
-		return null
-	}
-
-	descendantsOfType(type: string | string[], startPosition?: any, endPosition?: any): any[] {
-		return []
-	}
-}
-
-// Mock web-tree-sitter
-vi.mock("web-tree-sitter", () => ({
-	Node: vi.fn().mockImplementation(() => ({})),
-}))
 
 // Mock vscode
 vi.mock("vscode", () => ({
@@ -177,60 +99,10 @@ vi.mock("diff", () => ({
 describe("GhostXMLStrategy", () => {
 	let strategy: GhostXmlStrategy
 	let mockDocument: MockTextDocument
-	let mockASTContext: ASTContext
-	let mockRangeASTNode: MockNode
 
 	beforeEach(() => {
 		strategy = new GhostXmlStrategy()
 		mockDocument = new MockTextDocument(vscode.Uri.parse("file:///test.js"), "function test() {\n  return true;\n}")
-
-		// Create child node
-		const childNode = new MockNode({
-			type: "return_statement",
-			text: "return true;",
-		})
-
-		// Create parent node
-		const parentNode = new MockNode({
-			type: "function_declaration",
-			text: "function test() { return true; }",
-		})
-
-		// Create previous sibling
-		const prevSibling = new MockNode({
-			type: "keyword",
-			text: "function",
-		})
-
-		// Create next sibling
-		const nextSibling = new MockNode({
-			type: "parameters",
-			text: "()",
-		})
-
-		// Create the main node with a proper child function
-		mockRangeASTNode = new MockNode({
-			type: "identifier",
-			text: "test",
-			parent: parentNode,
-			previousSibling: prevSibling,
-			nextSibling: nextSibling,
-			childCount: 1,
-			_childFunction: (index: number) => (index === 0 ? childNode : null),
-		})
-
-		// Create mock root node
-		const mockRootNode = new MockNode({
-			type: "program",
-			text: "function test() { return true; }",
-		})
-		mockRootNode.descendantForPosition = vi.fn().mockReturnValue(mockRangeASTNode)
-
-		// Create mock AST context
-		mockASTContext = {
-			rootNode: mockRootNode as any,
-			language: "javascript",
-		}
 	})
 
 	afterEach(() => {
@@ -386,7 +258,7 @@ describe("GhostXMLStrategy", () => {
 			const context: GhostSuggestionContext = {
 				document: mockDocument,
 			}
-			const systemPrompt = strategy.getSystemPrompt(context)
+			const systemPrompt = strategy.getSystemPrompt()
 			expect(systemPrompt).toContain("CRITICAL OUTPUT FORMAT")
 			expect(systemPrompt).toContain("XML-formatted changes")
 		})
@@ -398,7 +270,7 @@ describe("GhostXMLStrategy", () => {
 				range: new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 0)),
 			}
 
-			const suggestionPrompt = strategy.getSuggestionPrompt(context)
+			const suggestionPrompt = strategy.getUserPrompt(context)
 			expect(suggestionPrompt).toContain("Add a comment")
 			expect(suggestionPrompt).toContain("<<<AUTOCOMPLETE_HERE>>>")
 		})
@@ -416,7 +288,7 @@ describe("GhostXMLStrategy", () => {
 				userInput: "Complete this function",
 			}
 
-			const prompt = strategy.getSystemPrompt(context)
+			const prompt = strategy.getSystemPrompt()
 
 			// Should contain base instructions from strategy system
 			expect(prompt).toContain("CRITICAL OUTPUT FORMAT")
@@ -436,8 +308,8 @@ describe("GhostXMLStrategy", () => {
 				userInput: "Add a function to calculate sum",
 			}
 
-			const systemPrompt = strategy.getSystemPrompt(context)
-			const userPrompt = strategy.getSuggestionPrompt(context)
+			const systemPrompt = strategy.getSystemPrompt()
+			const userPrompt = strategy.getUserPrompt(context)
 
 			// UserRequestStrategy should be selected
 			expect(systemPrompt).toContain("Execute User's Explicit Request")
@@ -457,7 +329,7 @@ describe("GhostXMLStrategy", () => {
 				document: mockDocument,
 			}
 
-			const prompt = strategy.getSuggestionPrompt(context)
+			const prompt = strategy.getUserPrompt(context)
 
 			// Should return a structured prompt
 			expect(prompt).toBeDefined()
@@ -480,8 +352,8 @@ describe("GhostXMLStrategy", () => {
 				userInput: "Complete this function",
 			}
 
-			const systemPrompt = strategy.getSystemPrompt(context)
-			const userPrompt = strategy.getSuggestionPrompt(context)
+			const systemPrompt = strategy.getSystemPrompt()
+			const userPrompt = strategy.getUserPrompt(context)
 
 			// System prompt should contain format instructions
 			expect(systemPrompt).toContain("CRITICAL OUTPUT FORMAT")
@@ -501,8 +373,8 @@ describe("GhostXMLStrategy", () => {
 				document: mockDocument,
 			}
 
-			const systemPrompt = strategy.getSystemPrompt(context)
-			const userPrompt = strategy.getSuggestionPrompt(context)
+			const systemPrompt = strategy.getSystemPrompt()
+			const userPrompt = strategy.getUserPrompt(context)
 
 			expect(systemPrompt).toBeDefined()
 			expect(systemPrompt.length).toBeGreaterThan(0)
@@ -558,8 +430,8 @@ describe("GhostXMLStrategy", () => {
 			]
 
 			contexts.forEach((context) => {
-				const systemPrompt = strategy.getSystemPrompt(context as GhostSuggestionContext)
-				const userPrompt = strategy.getSuggestionPrompt(context as GhostSuggestionContext)
+				const systemPrompt = strategy.getSystemPrompt()
+				const userPrompt = strategy.getUserPrompt(context as GhostSuggestionContext)
 
 				expect(systemPrompt).toBeDefined()
 				expect(systemPrompt.length).toBeGreaterThan(0)

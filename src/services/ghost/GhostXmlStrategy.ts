@@ -1,15 +1,16 @@
 import { GhostSuggestionContext } from "./types"
 import { GhostStreamingParser, StreamingParseResult } from "./GhostStreamingParser"
-import { PromptStrategyManager } from "./PromptStrategyManager"
+import { PromptGenerator } from "./types/PromptGenerator"
+import { UserRequestPromptGenerator } from "./strategies/UserRequestPromptGenerator"
 
 export class GhostXmlStrategy {
 	private streamingParser: GhostStreamingParser
-	private strategyManager: PromptStrategyManager
+	private promptGenerator: PromptGenerator
 	private debug: boolean
 
 	constructor(options?: { debug: boolean }) {
 		this.streamingParser = new GhostStreamingParser()
-		this.strategyManager = new PromptStrategyManager(options)
+		this.promptGenerator = new UserRequestPromptGenerator()
 		this.debug = options?.debug ?? false
 	}
 
@@ -17,12 +18,8 @@ export class GhostXmlStrategy {
 	 * Get the system prompt based on context using the new strategy system
 	 * Overloaded to support both new context-based and legacy string-only calls
 	 */
-	getSystemPrompt(context: GhostSuggestionContext): string {
-		const { systemPrompt, strategy } = this.strategyManager.buildPrompt(context)
-		if (this.debug) {
-			console.log(`[GhostStrategy] Using strategy: ${strategy.name}`)
-		}
-		return systemPrompt
+	getSystemPrompt(): string {
+		return this.promptGenerator.getSystemInstructions()
 	}
 
 	/**
@@ -30,14 +27,8 @@ export class GhostXmlStrategy {
 	 * @param context The suggestion context
 	 * @returns The user prompt
 	 */
-	getSuggestionPrompt(context: GhostSuggestionContext): string {
-		const { userPrompt, strategy } = this.strategyManager.buildPrompt(context)
-
-		if (this.debug) {
-			console.log(`[GhostStrategy] Generated prompt with strategy: ${strategy.name}`)
-		}
-
-		return userPrompt
+	getUserPrompt(context: GhostSuggestionContext): string {
+		return this.promptGenerator.getUserPrompt(context)
 	}
 
 	/**

@@ -104,9 +104,4 @@ export interface ContextAnalysis {
 	 * The cursor's character position
 	 */
 	cursorPosition: number
-
-	/**
-	 * The AST node type at the cursor position
-	 */
-	astNodeType?: string
 }
