@@ -15,8 +15,9 @@ vi.mock("./llm-client.js", () => ({
 describe("AutoTriggerStrategyTester", () => {
 	// Helper to extract code block from prompt
 	const extractCodeBlock = (prompt: string): string => {
-		const match = prompt.match(/```[^\n]*\n([\s\S]*?)\n```/)
-		return match ? match[1] : ""
+		// Look for the code block that comes after "## Full Code"
+		const fullCodeMatch = prompt.match(/## Full Code\n```[^\n]*\n([\s\S]*?)\n```/)
+		return fullCodeMatch ? fullCodeMatch[1] : ""
 	}
 
 	describe("createContext", () => {
