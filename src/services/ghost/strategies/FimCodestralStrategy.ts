@@ -66,10 +66,52 @@ Generate code to fill in at the cursor position. The code should:
 			new (context.range.constructor as any)(position, new (position.constructor as any)(document.lineCount, 0)),
 		)
 
+		// Get recent operations for additional context (from existing system)
+		const recentOpsContext = this.getRecentOperationsContext(context)
+
 		// Build the prompt using Continue's codestral format
-		// Format: [SUFFIX]suffix[PREFIX]prefix
-		let prompt = `[SUFFIX]${textAfterCursor}[PREFIX]${textBeforeCursor}${CURSOR_MARKER}`
+		// Format: [SUFFIX]suffix[PREFIX]prefix with recent operations context
+		let prompt = `[SUFFIX]${textAfterCursor}[PREFIX]${recentOpsContext}${textBeforeCursor}${CURSOR_MARKER}`
 
 		return prompt
+	}
+
+	/**
+	 * Get recent operations as context string from existing GhostDocumentStore
+	 * Includes both current file operations and global operations from other files
+	 */
+	private getRecentOperationsContext(context: GhostSuggestionContext): string {
+		const contextParts: string[] = []
+
+		// Add global operations from other files first (most recent 2)
+		if (context.globalRecentOperations && context.globalRecentOperations.length > 0) {
+			const globalOps = context.globalRecentOperations
+				.slice(0, 2)
+				.map((op) => {
+					const filename = op.filepath.split("/").pop() || op.filepath
+					return `// Recent in ${filename}: ${op.description}\n${op.content || ""}`
+				})
+				.join("\n\n")
+
+			if (globalOps) {
+				contextParts.push(globalOps)
+			}
+		}
+
+		// Add current file operations (most recent 2)
+		if (context.recentOperations && context.recentOperations.length > 0) {
+			const currentFileOps = context.recentOperations
+				.slice(0, 2)
+				.map((op) => {
+					return `// Recent: ${op.description}\n${op.content || ""}`
+				})
+				.join("\n\n")
+
+			if (currentFileOps) {
+				contextParts.push(currentFileOps)
+			}
+		}
+
+		return contextParts.length > 0 ? `${contextParts.join("\n\n")}\n\n` : ""
 	}
 }
