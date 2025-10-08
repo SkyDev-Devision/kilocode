@@ -2,6 +2,7 @@ import { GhostSuggestionContext } from "../types"
 import { BasePromptStrategy } from "./BasePromptStrategy"
 import { UseCaseType } from "../types/PromptStrategy"
 import { CURSOR_MARKER } from "../ghostConstants"
+import { rankSnippets } from "../context/ContextRanking"
 
 /**
  * Strategy using Fill-In-the-Middle (FIM) format for Codestral
@@ -78,40 +79,91 @@ Generate code to fill in at the cursor position. The code should:
 
 	/**
 	 * Get recent operations as context string from existing GhostDocumentStore
-	 * Includes both current file operations and global operations from other files
+	 * Uses Jaccard similarity ranking to prioritize most relevant operations
 	 */
 	private getRecentOperationsContext(context: GhostSuggestionContext): string {
-		const contextParts: string[] = []
-
-		// Add global operations from other files first (most recent 2)
-		if (context.globalRecentOperations && context.globalRecentOperations.length > 0) {
-			const globalOps = context.globalRecentOperations
-				.slice(0, 2)
-				.map((op) => {
-					const filename = op.filepath.split("/").pop() || op.filepath
-					return `// Recent in ${filename}: ${op.description}\n${op.content || ""}`
-				})
-				.join("\n\n")
-
-			if (globalOps) {
-				contextParts.push(globalOps)
-			}
+		if (!context.document || !context.range) {
+			return ""
 		}
 
-		// Add current file operations (most recent 2)
+		// Get window around cursor for similarity comparison
+		const position = context.range.start
+		const windowSize = 500 // characters before and after cursor
+
+		const textBeforeCursor = context.document.getText(
+			new (context.range.constructor as any)(
+				new (position.constructor as any)(Math.max(0, position.line - 5), 0),
+				position,
+			),
+		)
+		const textAfterCursor = context.document.getText(
+			new (context.range.constructor as any)(
+				position,
+				new (position.constructor as any)(Math.min(position.line + 5, context.document.lineCount), 0),
+			),
+		)
+		const windowAroundCursor = textBeforeCursor + textAfterCursor
+
+		// Collect all operations with their content
+		const allOperations: Array<{ content: string; filepath: string; description: string; isGlobal: boolean }> = []
+
+		// Add current file operations
 		if (context.recentOperations && context.recentOperations.length > 0) {
-			const currentFileOps = context.recentOperations
-				.slice(0, 2)
-				.map((op) => {
-					return `// Recent: ${op.description}\n${op.content || ""}`
-				})
-				.join("\n\n")
-
-			if (currentFileOps) {
-				contextParts.push(currentFileOps)
-			}
+			context.recentOperations.forEach((op) => {
+				if (op.content) {
+					allOperations.push({
+						content: op.content,
+						filepath: context.document!.uri.toString(),
+						description: op.description,
+						isGlobal: false,
+					})
+				}
+			})
 		}
 
-		return contextParts.length > 0 ? `${contextParts.join("\n\n")}\n\n` : ""
+		// Add global operations from other files
+		if (context.globalRecentOperations && context.globalRecentOperations.length > 0) {
+			context.globalRecentOperations.forEach((op) => {
+				if (op.content) {
+					allOperations.push({
+						content: op.content,
+						filepath: op.filepath,
+						description: op.description,
+						isGlobal: true,
+					})
+				}
+			})
+		}
+
+		if (allOperations.length === 0) {
+			return ""
+		}
+
+		// Rank operations by similarity to code around cursor
+		const rankedOps = rankSnippets(
+			allOperations.map((op) => ({
+				content: op.content,
+				filepath: op.filepath,
+			})),
+			windowAroundCursor,
+		)
+
+		// Take top 3 most relevant operations
+		const topOperations = rankedOps.slice(0, 3)
+
+		// Format with descriptions
+		const contextParts = topOperations.map((ranked) => {
+			const op = allOperations.find((o) => o.content === ranked.content && o.filepath === ranked.filepath)
+			if (!op) return ""
+
+			if (op.isGlobal) {
+				const filename = op.filepath.split("/").pop() || op.filepath
+				return `// Recent in ${filename}: ${op.description} (relevance: ${(ranked.score * 100).toFixed(0)}%)\n${ranked.content}`
+			} else {
+				return `// Recent: ${op.description} (relevance: ${(ranked.score * 100).toFixed(0)}%)\n${ranked.content}`
+			}
+		})
+
+		return contextParts.length > 0 ? `${contextParts.filter(Boolean).join("\n\n")}\n\n` : ""
 	}
 }
