@@ -68,9 +68,6 @@ export async function executeVSCodeCommand(page: Page, commandName: string): Pro
 
 	// Type the command name
 	await page.keyboard.type(commandName)
-	await page.waitForTimeout(100)
-
-	// Execute the command
 	await page.keyboard.press("Enter")
-	await page.waitForTimeout(100)
+	await page.waitForTimeout(300)
 }

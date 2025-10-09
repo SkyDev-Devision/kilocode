@@ -7,6 +7,7 @@ import * as fs from "fs"
 import { fileURLToPath } from "url"
 import { camelCase } from "change-case"
 import { setupConsoleLogging, cleanLogMessage } from "../helpers/console-logging"
+import { clearNotifications } from "../helpers"
 
 // ES module equivalent of __dirname
 const __filename = fileURLToPath(import.meta.url)
@@ -192,6 +193,8 @@ export const test = base.extend<TestFixtures>({
 
 	takeScreenshot: async ({ workbox: page }, use) => {
 		await use(async (name?: string) => {
+			await clearNotifications(page)
+
 			// Extract test suite from the test file name or use a default
 			const testInfo = test.info()
 			const fileName = testInfo.file.split("/").pop()?.replace(".test.ts", "") || "unknown"
