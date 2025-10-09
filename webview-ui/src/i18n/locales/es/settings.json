@@ -313,8 +313,10 @@
 		"sambaNovaApiKey": "Clave API de SambaNova",
 		"getHuggingFaceApiKey": "Obtener clave API de Hugging Face",
 		"huggingFaceApiKey": "Clave API de Hugging Face",
-		"getOvhCloudAiEndpointsApiKey": "Obtener clave API de OVHCloud AI Endpoints",
-		"ovhCloudAiEndpointsApiKey": "Clave API de OVHCloud AI Endpoints",
+		"getOvhCloudAiEndpointsApiKey": "Obtener clave API de OVHcloud AI Endpoints",
+		"ovhCloudAiEndpointsApiKey": "Clave API de OVHcloud AI Endpoints",
+		"ovhCloudAiEndpointsBaseUrl": "URL base",
+		"getOvhCloudAiEndpointsBaseUrl": "Usar una URL base personalizada",
 		"huggingFaceModelId": "ID del modelo",
 		"huggingFaceLoading": "Cargando...",
 		"huggingFaceModelsCount": "({{count}} modelos)",
@@ -923,6 +925,11 @@
 		"taskTimeline": {
 			"label": "Mostrar cronología de tareas",
 			"description": "Muestra una línea de tiempo visual de los mensajes de tareas, colorizados por tipo, permitiéndote ver rápidamente el progreso de la tarea y desplazarte hacia atrás hasta puntos específicos en el historial de la tarea."
+		},
+		"costThreshold": {
+			"label": "Ocultar costo por debajo del umbral",
+			"description": "Solo mostrar los costos de solicitud superiores a este monto. Los costos siempre son visibles cuando el panel de detalles está abierto.",
+			"currentValue": "Umbral actual: ${{value}}"
 		}
 	},
 	"ghost": {

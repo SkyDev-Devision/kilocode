@@ -314,8 +314,10 @@
 		"getGeminiApiKey": "Gemini API-sleutel ophalen",
 		"getHuggingFaceApiKey": "Hugging Face API-sleutel ophalen",
 		"huggingFaceApiKey": "Hugging Face API-sleutel",
-		"getOvhCloudAiEndpointsApiKey": "OVHCloud AI Endpoints API-sleutel ophalen",
-		"ovhCloudAiEndpointsApiKey": "OVHCloud AI Endpoints API-sleutel",
+		"getOvhCloudAiEndpointsApiKey": "OVHcloud AI Endpoints API-sleutel ophalen",
+		"ovhCloudAiEndpointsApiKey": "OVHcloud AI Endpoints API-sleutel",
+		"ovhCloudAiEndpointsBaseUrl": "Basis-URL",
+		"getOvhCloudAiEndpointsBaseUrl": "Aangepaste basis-URL gebruiken",
 		"huggingFaceModelId": "Model ID",
 		"huggingFaceLoading": "Laden...",
 		"huggingFaceModelsCount": "({{count}} modellen)",
@@ -924,6 +926,11 @@
 		"taskTimeline": {
 			"label": "Taaktijdlijn weergeven",
 			"description": "Toon een visuele tijdlijn van taakmeldingen, gekleurd per type, waardoor je snel de voortgang van taken kunt bekijken en terug kunt scrollen naar specifieke punten in de geschiedenis van de taak."
+		},
+		"costThreshold": {
+			"label": "Kosten onder drempel verbergen",
+			"currentValue": "Huidige drempelwaarde: ${{value}}",
+			"description": "Toon alleen aanvraagkosten hoger dan dit bedrag. Kosten zijn altijd zichtbaar wanneer het detailpaneel is geopend."
 		}
 	},
 	"ghost": {

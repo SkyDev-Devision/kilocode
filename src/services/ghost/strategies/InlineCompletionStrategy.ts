@@ -1,14 +1,9 @@
 import { GhostSuggestionContext } from "../types"
-import { BasePromptStrategy } from "./BasePromptStrategy"
-import { UseCaseType } from "../types/PromptStrategy"
+import { PromptStrategy, UseCaseType } from "../types/PromptStrategy"
 import { CURSOR_MARKER } from "../ghostConstants"
-import { formatDocumentWithCursor } from "./StrategyHelpers"
+import { formatDocumentWithCursor, getBaseSystemInstructions } from "./StrategyHelpers"
 
-/**
- * Strategy for inline code completions (mid-line completions)
- * Lower priority, handles partial line completions
- */
-export class InlineCompletionStrategy extends BasePromptStrategy {
+export class InlineCompletionStrategy implements PromptStrategy {
 	name = "Inline Completion"
 	type = UseCaseType.INLINE_COMPLETION
 
@@ -26,9 +21,9 @@ export class InlineCompletionStrategy extends BasePromptStrategy {
 		return hasContentBefore && !context.userInput && !context.range.isEmpty === false && isNotAtEnd
 	}
 
-	getSystemInstructions(): string {
+	getSystemInstructions(customInstructions?: string): string {
 		return (
-			this.getBaseSystemInstructions() +
+			getBaseSystemInstructions() +
 			`You are an expert code completion assistant specializing in inline completions.
 
 ## Core Responsibilities:

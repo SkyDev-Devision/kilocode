@@ -405,6 +405,7 @@ const sambaNovaSchema = apiModelIdProviderModelSchema.extend({
 const ovhcloudSchema = baseProviderSettingsSchema.extend({
 	ovhCloudAiEndpointsApiKey: z.string().optional(),
 	ovhCloudAiEndpointsModelId: z.string().optional(),
+	ovhCloudAiEndpointsBaseUrl: z.string().optional(),
 })
 
 const kilocodeSchema = baseProviderSettingsSchema.extend({

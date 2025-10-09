@@ -1,8 +1,8 @@
 import { GhostSuggestionContext } from "../types"
-import { BasePromptStrategy } from "./BasePromptStrategy"
-import { UseCaseType } from "../types/PromptStrategy"
+import { PromptStrategy, UseCaseType } from "../types/PromptStrategy"
 import { CURSOR_MARKER } from "../ghostConstants"
 import { rankSnippets } from "../context/ContextRanking"
+import { getBaseSystemInstructions } from "./StrategyHelpers"
 
 /**
  * Strategy using Fill-In-the-Middle (FIM) format for Codestral
@@ -11,19 +11,19 @@ import { rankSnippets } from "../context/ContextRanking"
  * This strategy implements the FIM prompt template with special [SUFFIX] and [PREFIX] markers
  * that Codestral models are trained to understand for code completion.
  */
-export class FimCodestralStrategy extends BasePromptStrategy {
+export class FimCodestralStrategy implements PromptStrategy {
 	name = "FIM Codestral"
-	type = UseCaseType.AUTO_TRIGGER
+	type = UseCaseType.FIM_CODESTRAL
 
 	canHandle(_context: GhostSuggestionContext): boolean {
 		// This strategy can handle all cases when explicitly selected
 		// In production, you'd add specific logic here
-		return true
+		return false // We will enable in the next PR -- 2025-10-09
 	}
 
-	getSystemInstructions(): string {
+	getSystemInstructions(customInstructions?: string): string {
 		return (
-			this.getBaseSystemInstructions() +
+			getBaseSystemInstructions() +
 			`You are an AI assistant specialized in code completion using Fill-In-the-Middle (FIM) format.
 
 ## FIM Format Understanding
@@ -55,26 +55,21 @@ Generate code to fill in at the cursor position. The code should:
 		if (!context.document || !context.range) {
 			return "No context available for completion."
 		}
+    
+    // Get recent operations for additional context (from existing system)
+		const recentOpsContext = this.getRecentOperationsContext(context)
 
 		const document = context.document
 		const position = context.range.start
 
+ 		// FIXME: use addCursorMarker from StrategyHelpers.ts
 		// Get the code before and after the cursor
-		const textBeforeCursor = document.getText(
-			new (context.range.constructor as any)(new (position.constructor as any)(0, 0), position),
-		)
-		const textAfterCursor = document.getText(
-			new (context.range.constructor as any)(position, new (position.constructor as any)(document.lineCount, 0)),
-		)
+		const fullText = document.getText()
+		const offset = document.offsetAt(position)
+		const textBeforeCursor = fullText.substring(0, offset)
+		const textAfterCursor = fullText.substring(offset)
 
-		// Get recent operations for additional context (from existing system)
-		const recentOpsContext = this.getRecentOperationsContext(context)
-
-		// Build the prompt using Continue's codestral format
-		// Format: [SUFFIX]suffix[PREFIX]prefix with recent operations context
-		let prompt = `[SUFFIX]${textAfterCursor}[PREFIX]${recentOpsContext}${textBeforeCursor}${CURSOR_MARKER}`
-
-		return prompt
+		return `[SUFFIX]${textAfterCursor}[PREFIX]${recentOpsContext}${textBeforeCursor}${CURSOR_MARKER}`
 	}
 
 	/**

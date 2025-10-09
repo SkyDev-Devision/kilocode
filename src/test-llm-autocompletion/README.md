@@ -62,7 +62,9 @@ Use `--skip-approval` (or `-sa`) to run tests in CI/CD or when you want to avoid
 
 - Tests that match previously approved outputs will **pass**
 - Tests that match previously rejected outputs will **fail**
-- Tests with new outputs (not previously approved or rejected) will **fail** without prompting
+- Tests with new outputs (not previously approved or rejected) will be marked as **unknown** without prompting
+
+The accuracy calculation only includes passed and failed tests, excluding unknown tests. This gives you a true measure of how the model performs on known cases.
 
 This is useful for:
 

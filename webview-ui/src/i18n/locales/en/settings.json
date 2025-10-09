@@ -318,8 +318,10 @@
 		"sambaNovaApiKey": "SambaNova API Key",
 		"getHuggingFaceApiKey": "Get Hugging Face API Key",
 		"huggingFaceApiKey": "Hugging Face API Key",
-		"getOvhCloudAiEndpointsApiKey": "Get OVHCloud AI Endpoints API Key",
-		"ovhCloudAiEndpointsApiKey": "OVHCloud AI Endpoints API Key",
+		"getOvhCloudAiEndpointsApiKey": "Get OVHcloud AI Endpoints API Key",
+		"ovhCloudAiEndpointsApiKey": "OVHcloud AI Endpoints API Key",
+		"ovhCloudAiEndpointsBaseUrl": "Base URL",
+		"getOvhCloudAiEndpointsBaseUrl": "Use a custom base URL",
 		"huggingFaceModelId": "Model ID",
 		"huggingFaceLoading": "Loading...",
 		"huggingFaceModelsCount": "({{count}} models)",
@@ -558,6 +560,11 @@
 		"taskTimeline": {
 			"label": "Show task timeline",
 			"description": "Display a visual timeline of task messages, colorized by type, allowing you to quickly view task progress and scroll back to specific points in the task's history."
+		},
+		"costThreshold": {
+			"label": "Hide cost below threshold",
+			"description": "Only show request costs above this amount. Costs are always visible when the details pane is open.",
+			"currentValue": "Current threshold: ${{value}}"
 		}
 	},
 	"ghost": {

@@ -314,8 +314,10 @@
 		"getGeminiApiKey": "Получить Gemini API-ключ",
 		"getHuggingFaceApiKey": "Получить Hugging Face API-ключ",
 		"huggingFaceApiKey": "Hugging Face API-ключ",
-		"getOvhCloudAiEndpointsApiKey": "Получить OVHCloud AI Endpoints API-ключ",
-		"ovhCloudAiEndpointsApiKey": "OVHCloud AI Endpoints API-ключ",
+		"getOvhCloudAiEndpointsApiKey": "Получить OVHcloud AI Endpoints API-ключ",
+		"ovhCloudAiEndpointsApiKey": "OVHcloud AI Endpoints API-ключ",
+		"ovhCloudAiEndpointsBaseUrl": "Базовый URL",
+		"getOvhCloudAiEndpointsBaseUrl": "Использовать пользовательский базовый URL",
 		"huggingFaceModelId": "ID модели",
 		"huggingFaceLoading": "Загрузка...",
 		"huggingFaceModelsCount": "({{count}} моделей)",
@@ -924,6 +926,11 @@
 		"taskTimeline": {
 			"label": "Показать временную шкалу задачи",
 			"description": "Отображение визуальной временной шкалы сообщений задачи с цветовым разделением по типам, позволяющее быстро просматривать прогресс выполнения и перематывать к определенным моментам в истории задачи."
+		},
+		"costThreshold": {
+			"label": "Скрыть стоимость ниже порога",
+			"description": "Показывать только расходы на запросы выше этой суммы. Расходы всегда видны, когда открыта панель подробностей.",
+			"currentValue": "Текущее пороговое значение: ${{value}}"
 		}
 	},
 	"ghost": {

@@ -99,9 +99,9 @@ export async function checkApproval(
 		return { isApproved: false, newOutput: false }
 	}
 
-	// If skipApproval is true, mark as failed without asking
+	// If skipApproval is true, mark as unknown (new output)
 	if (skipApproval) {
-		return { isApproved: false, newOutput: false }
+		return { isApproved: false, newOutput: true }
 	}
 
 	const isApproved = await askUserApproval(category, testName, input, output)

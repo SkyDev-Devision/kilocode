@@ -1,21 +1,13 @@
 import type { TextDocument, Range } from "vscode"
 import { GhostSuggestionContext } from "../types"
-import { UseCaseType } from "../types/PromptStrategy"
-import { BasePromptStrategy } from "./BasePromptStrategy"
+import { PromptStrategy, UseCaseType } from "../types/PromptStrategy"
 import { CURSOR_MARKER } from "../ghostConstants"
-import { formatDocumentWithCursor } from "./StrategyHelpers"
+import { formatDocumentWithCursor, getBaseSystemInstructions } from "./StrategyHelpers"
 
-/**
- * Strategy for proactive code completion on new/empty lines
- * suggests logical next code when user creates a new line
- */
-export class NewLineCompletionStrategy extends BasePromptStrategy {
+export class NewLineCompletionStrategy implements PromptStrategy {
 	name = "New Line Completion"
 	type = UseCaseType.NEW_LINE
 
-	/**
-	 * Can handle when cursor is on an empty line
-	 */
 	canHandle(context: GhostSuggestionContext): boolean {
 		if (!context.document || !context.range) return false
 
@@ -23,12 +15,9 @@ export class NewLineCompletionStrategy extends BasePromptStrategy {
 		return line.trim() === ""
 	}
 
-	/**
-	 * System instructions for new line completion
-	 */
-	getSystemInstructions(): string {
+	getSystemInstructions(customInstructions?: string): string {
 		return (
-			this.getBaseSystemInstructions() +
+			getBaseSystemInstructions() +
 			`Task: Proactive Code Completion for New Lines
 The user has created a new line. Suggest the most logical next code based on context.
 

@@ -4,6 +4,7 @@ import { LLMClient } from "./llm-client.js"
 import { StrategyTester } from "./strategy-tester.js"
 import { testCases, getCategories, TestCase } from "./test-cases.js"
 import { checkApproval } from "./approvals.js"
+import { PromptStrategyManager } from "../services/ghost/PromptStrategyManager.js"
 
 interface TestResult {
 	testCase: TestCase
@@ -86,6 +87,10 @@ class TestRunner {
 		}
 	}
 
+	private isUnknownResult(result: TestResult): boolean {
+		return !result.isApproved && result.newOutput === true && this.skipApproval
+	}
+
 	async runAllTests(): Promise<void> {
 		console.log("\n🚀 Starting PromptStrategyManager LLM Tests\n")
 		console.log("Provider:", this.llmClient["provider"])
@@ -119,6 +124,9 @@ class TestRunner {
 					if (result.newOutput) {
 						console.log(`    (New output approved)`)
 					}
+				} else if (this.isUnknownResult(result)) {
+					console.log("? UNKNOWN")
+					console.log(`    (New output without approval)`)
 				} else {
 					console.log("✗ FAILED")
 					if (result.error) {
@@ -168,13 +176,22 @@ class TestRunner {
 		console.log("\n" + "═".repeat(80))
 		console.log("\n📊 Test Summary\n")
 
-		const passed = this.results.filter((r) => r.isApproved).length
-		const failed = this.results.filter((r) => !r.isApproved).length
-		const passRate = ((passed / this.results.length) * 100).toFixed(1)
+		const unknownResults = this.results.filter((r) => this.isUnknownResult(r))
+		const failedResults = this.results.filter((r) => !r.isApproved && !this.isUnknownResult(r))
+		const passedResults = this.results.filter((r) => r.isApproved)
+
+		const passed = passedResults.length
+		const unknown = unknownResults.length
+		const failed = failedResults.length
+		const knownTotal = passed + failed
+		const passRate = knownTotal > 0 ? ((passed / knownTotal) * 100).toFixed(1) : "0.0"
 
 		console.log(`  ✓ Passed: ${passed}`)
 		console.log(`  ✗ Failed: ${failed}`)
-		console.log(`  📈 Pass Rate: ${passRate}%`)
+		if (unknown > 0) {
+			console.log(`  ? Unknown: ${unknown}`)
+		}
+		console.log(`  📈 Accuracy: ${passRate}% (${passed}/${knownTotal})`)
 
 		const requestDurations = this.results
 			.filter((r) => r.llmRequestDuration !== undefined)
@@ -192,9 +209,10 @@ class TestRunner {
 			const categoryResults = this.results.filter((r) => r.testCase.category === category)
 			const categoryPassed = categoryResults.filter((r) => r.isApproved).length
 			const categoryTotal = categoryResults.length
-			const categoryRate = ((categoryPassed / categoryTotal) * 100).toFixed(0)
+			const categoryRateNum = (categoryPassed / categoryTotal) * 100
+			const categoryRate = categoryRateNum.toFixed(0)
 
-			const statusIndicator = categoryRate === "100" ? "✓" : categoryRate >= "75" ? "⚠" : "✗"
+			const statusIndicator = categoryRateNum === 100 ? "✓" : categoryRateNum >= 75 ? "⚠" : "✗"
 
 			console.log(`  ${category}: ${statusIndicator} ${categoryPassed}/${categoryTotal} (${categoryRate}%)`)
 		}
@@ -217,14 +235,21 @@ class TestRunner {
 		}
 
 		// Failed tests details
-		const failedResults = this.results.filter((r) => !r.isApproved)
-		if (failedResults.length > 0) {
+		if (failed > 0) {
 			console.log("\n❌ Failed Tests:")
 			for (const result of failedResults) {
 				console.log(`  • ${result.testCase.name} (${result.testCase.category})`)
 				if (result.error) {
 					console.log(`    Error: ${result.error}`)
 				}
+			}
+		}
+
+		// Unknown tests details
+		if (unknown > 0) {
+			console.log("\n❓ Unknown Tests (new outputs without approval):")
+			for (const result of unknownResults) {
+				console.log(`  • ${result.testCase.name} (${result.testCase.category})`)
 			}
 		}
 
@@ -359,10 +384,31 @@ async function main() {
 
 	// Check for strategy override
 	const strategyArgIndex = args.findIndex((arg) => arg === "--strategy" || arg === "-s")
-	const overrideStrategy =
-		strategyArgIndex !== -1 && args[strategyArgIndex + 1]
-			? args[strategyArgIndex + 1]
-			: process.env.TEST_STRATEGY || undefined
+	let overrideStrategy: string | undefined
+
+	if (strategyArgIndex !== -1) {
+		const strategyValue = args[strategyArgIndex + 1]
+		if (!strategyValue || strategyValue.startsWith("-")) {
+			console.error("\n❌ Error: --strategy/-s flag requires a strategy name")
+			console.log("\nUsage: --strategy <strategy-name> or -s <strategy-name>\n")
+			process.exit(1)
+		}
+		overrideStrategy = strategyValue
+	}
+
+	// Validate strategy if provided
+	if (overrideStrategy) {
+		const strategyManager = new PromptStrategyManager()
+		const availableStrategies = strategyManager.getAvailableStrategies()
+
+		if (!availableStrategies.includes(overrideStrategy)) {
+			console.error(`\n❌ Error: Strategy "${overrideStrategy}" does not exist`)
+			console.log("\nAvailable strategies:")
+			availableStrategies.forEach((strategy) => console.log(`  - ${strategy}`))
+			console.log()
+			process.exit(1)
+		}
+	}
 
 	const testName = args.find((arg) => !arg.startsWith("-") && arg !== overrideStrategy)
 
