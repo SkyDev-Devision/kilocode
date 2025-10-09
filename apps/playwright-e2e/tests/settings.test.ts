@@ -1,5 +1,5 @@
 import { test, expect, type TestFixtures } from "./playwright-base-test"
-import { findWebview, upsertApiConfiguration, verifyExtensionInstalled } from "../helpers"
+import { findWebview, upsertApiConfiguration, verifyExtensionInstalled, clickSaveButtonIfEnabled } from "../helpers"
 
 test.describe("Settings", () => {
 	test("screenshots", async ({ workbox: page, takeScreenshot }: TestFixtures) => {
@@ -35,6 +35,7 @@ test.describe("Settings", () => {
 			const testId = await tabButton.getAttribute("data-testid")
 			const sectionId = testId?.replace("tab-", "") || `section-${i}`
 
+			await clickSaveButtonIfEnabled(webviewFrame) // To avoid flakey screenshots
 			await takeScreenshot(`${i}-settings-${sectionId}-${tabName.toLowerCase().replace(/\s+/g, "-")}`)
 		}
 

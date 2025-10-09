@@ -86,3 +86,13 @@ export async function configureApiKeyThroughUI(page: Page): Promise<void> {
 	await submitButton.click()
 	console.log("✅ Provider configured!")
 }
+
+export async function clickSaveButtonIfEnabled(webviewFrame: FrameLocator): Promise<void> {
+	const saveButton = webviewFrame.locator('[data-testid="save-button"]')
+
+	const isDisabled = await saveButton.getAttribute("disabled")
+	if (isDisabled === null) {
+		await saveButton.click()
+		console.log("✅ Clicked Settings save button")
+	}
+}
