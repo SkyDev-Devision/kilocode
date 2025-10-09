@@ -50,3 +50,17 @@ export async function switchToTheme(page: Page, themeName: string): Promise<void
 	await page.keyboard.press("Enter")
 	await page.waitForTimeout(100)
 }
+
+export async function executeVSCodeCommand(page: Page, commandName: string): Promise<void> {
+	// Open command palette
+	await page.keyboard.press(`${modifier}+Shift+P`)
+	await page.waitForTimeout(100)
+
+	// Type the command name
+	await page.keyboard.type(commandName)
+	await page.waitForTimeout(100)
+
+	// Execute the command
+	await page.keyboard.press("Enter")
+	await page.waitForTimeout(100)
+}
