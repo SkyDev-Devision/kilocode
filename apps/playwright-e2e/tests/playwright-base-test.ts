@@ -7,7 +7,7 @@ import * as fs from "fs"
 import { fileURLToPath } from "url"
 import { camelCase } from "change-case"
 import { setupConsoleLogging, cleanLogMessage } from "../helpers/console-logging"
-import { closeAllTabs, executeVSCodeCommand } from "../helpers"
+import { closeAllTabs, executeVSCodeCommand, waitForDOMStability } from "../helpers"
 
 // ES module equivalent of __dirname
 const __filename = fileURLToPath(import.meta.url)
@@ -195,6 +195,7 @@ export const test = base.extend<TestFixtures>({
 		await use(async (name?: string) => {
 			await closeAllTabs(page)
 			await executeVSCodeCommand(page, "Notifications:Clear")
+			await waitForDOMStability(page)
 
 			// Extract test suite from the test file name or use a default
 			const testInfo = test.info()

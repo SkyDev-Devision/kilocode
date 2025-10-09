@@ -13,9 +13,6 @@ test.describe("E2E Chat Test", () => {
 		await verifyExtensionInstalled(page)
 		await waitForWebviewText(page, "Welcome to Kilo Code!")
 
-		await page.waitForTimeout(1000) // Let the page settle to avoid flakes
-		await takeScreenshot("welcome")
-
 		await configureApiKeyThroughUI(page)
 		await waitForWebviewText(page, "Generate, refactor, and debug code with AI assistance")
 
