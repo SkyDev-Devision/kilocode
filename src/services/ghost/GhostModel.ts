@@ -1,11 +1,8 @@
-import { SUPPORTED_AUTOCOMPLETE_PROVIDERS } from "@roo-code/types"
+import { SUPPORTED_AUTOCOMPLETE_PROVIDERS, AUTOCOMPLETE_PROVIDER_MODELS } from "@roo-code/types"
 import { ApiHandler, buildApiHandler } from "../../api"
 import { ProviderSettingsManager } from "../../core/config/ProviderSettingsManager"
 import { OpenRouterHandler } from "../../api/providers"
 import { ApiStreamChunk } from "../../api/transform/stream"
-
-const KILOCODE_DEFAULT_MODEL = "mistralai/codestral-2508"
-const MISTRAL_DEFAULT_MODEL = "codestral-latest"
 
 export class GhostModel {
 	private apiHandler: ApiHandler | null = null
@@ -46,15 +43,15 @@ export class GhostModel {
 			let modelDefinition = {}
 			if (profileProvider === "kilocode") {
 				modelDefinition = {
-					kilocodeModel: KILOCODE_DEFAULT_MODEL,
+					kilocodeModel: AUTOCOMPLETE_PROVIDER_MODELS.kilocode,
 				}
 			} else if (profileProvider === "openrouter") {
 				modelDefinition = {
-					openRouterModelId: KILOCODE_DEFAULT_MODEL,
+					openRouterModelId: AUTOCOMPLETE_PROVIDER_MODELS.openrouter,
 				}
 			} else if (profileProvider === "mistral") {
 				modelDefinition = {
-					apiModelId: MISTRAL_DEFAULT_MODEL,
+					apiModelId: AUTOCOMPLETE_PROVIDER_MODELS.mistral,
 				}
 			}
 			this.apiHandler = buildApiHandler({
