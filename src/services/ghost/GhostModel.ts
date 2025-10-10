@@ -8,7 +8,7 @@ import { ApiStreamChunk } from "../../api/transform/stream"
 const KILOCODE_DEFAULT_MODEL = "mistralai/codestral-2508"
 const MISTRAL_DEFAULT_MODEL = "codestral-latest"
 
-const SUPPORTED_DEFAULT_PROVIDERS = ["mistral", "kilocode", "openrouter"]
+export const SUPPORTED_AUTOCOMPLETE_PROVIDERS = ["mistral", "kilocode", "openrouter"]
 
 export class GhostModel {
 	private apiHandler: ApiHandler | null = null
@@ -24,7 +24,7 @@ export class GhostModel {
 	public async reload(settings: GhostServiceSettings, providerSettingsManager: ProviderSettingsManager) {
 		const profiles = await providerSettingsManager.listConfig()
 		const validProfiles = profiles
-			.filter((x) => x.apiProvider && SUPPORTED_DEFAULT_PROVIDERS.includes(x.apiProvider))
+			.filter((x) => x.apiProvider && SUPPORTED_AUTOCOMPLETE_PROVIDERS.includes(x.apiProvider))
 			.sort((a, b) => {
 				if (!a.apiProvider) {
 					return 1 // Place undefined providers at the end
@@ -33,8 +33,8 @@ export class GhostModel {
 					return -1 // Place undefined providers at the beginning
 				}
 				return (
-					SUPPORTED_DEFAULT_PROVIDERS.indexOf(a.apiProvider) -
-					SUPPORTED_DEFAULT_PROVIDERS.indexOf(b.apiProvider)
+					SUPPORTED_AUTOCOMPLETE_PROVIDERS.indexOf(a.apiProvider) -
+					SUPPORTED_AUTOCOMPLETE_PROVIDERS.indexOf(b.apiProvider)
 				)
 			})
 
