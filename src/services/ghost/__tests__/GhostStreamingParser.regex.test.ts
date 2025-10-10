@@ -105,6 +105,41 @@ new2]]></replace></change>`
 		})
 	})
 
+	describe("CDATA with autocomplete markers", () => {
+		it("matches CDATA containing autocomplete marker", () => {
+			const input = `<change><search><![CDATA[
+import { ApiStream } from "../transform/stream"
+
+import { BaseOpenAiCompatibleProvider } from "./base-openai-compatible-provider"
+<<<AUTOCOMPLETE_HERE>>>
+export class FeatherlessHandler extends BaseOpenAiCompatibleProvider<FeatherlessModelId> {
+]]></search><replace><![CDATA[
+import { ApiStream } from "../transform/stream"
+
+import { BaseOpenAiCompatibleProvider } from "./base-openai-compatible-provider"
+
+export class FeatherlessHandler extends BaseOpenAiCompatibleProvider<FeatherlessModelId> {
+]]></replace></change>`
+			const matches = [...input.matchAll(CHANGE_BLOCK_REGEX)]
+
+			expect(matches).toHaveLength(1)
+			expect(matches[0][1]).toBe(`
+import { ApiStream } from "../transform/stream"
+
+import { BaseOpenAiCompatibleProvider } from "./base-openai-compatible-provider"
+<<<AUTOCOMPLETE_HERE>>>
+export class FeatherlessHandler extends BaseOpenAiCompatibleProvider<FeatherlessModelId> {
+`)
+			expect(matches[0][2]).toBe(`
+import { ApiStream } from "../transform/stream"
+
+import { BaseOpenAiCompatibleProvider } from "./base-openai-compatible-provider"
+
+export class FeatherlessHandler extends BaseOpenAiCompatibleProvider<FeatherlessModelId> {
+`)
+		})
+	})
+
 	describe("multiple change blocks", () => {
 		it("matches multiple consecutive change blocks", () => {
 			const input = `<change><search><![CDATA[first]]></search><replace><![CDATA[1st]]></replace></change><change><search><![CDATA[second]]></search><replace><![CDATA[2nd]]></replace></change>`
