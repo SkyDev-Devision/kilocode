@@ -1,4 +1,4 @@
-import { GhostServiceSettings, SUPPORTED_AUTOCOMPLETE_PROVIDERS } from "@roo-code/types"
+import { SUPPORTED_AUTOCOMPLETE_PROVIDERS } from "@roo-code/types"
 import { ApiHandler, buildApiHandler } from "../../api"
 import { ProviderSettingsManager } from "../../core/config/ProviderSettingsManager"
 import { OpenRouterHandler } from "../../api/providers"
@@ -18,7 +18,7 @@ export class GhostModel {
 		}
 	}
 
-	public async reload(settings: GhostServiceSettings, providerSettingsManager: ProviderSettingsManager) {
+	public async reload(providerSettingsManager: ProviderSettingsManager) {
 		const profiles = await providerSettingsManager.listConfig()
 		const validProfiles = profiles
 			.filter(
