@@ -1,6 +1,5 @@
 import { GhostServiceSettings, SUPPORTED_AUTOCOMPLETE_PROVIDERS } from "@roo-code/types"
 import { ApiHandler, buildApiHandler } from "../../api"
-import { ContextProxy } from "../../core/config/ContextProxy"
 import { ProviderSettingsManager } from "../../core/config/ProviderSettingsManager"
 import { OpenRouterHandler } from "../../api/providers"
 import { ApiStreamChunk } from "../../api/transform/stream"
