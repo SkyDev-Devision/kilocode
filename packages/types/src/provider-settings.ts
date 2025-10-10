@@ -165,12 +165,6 @@ export const AUTOCOMPLETE_PROVIDER_MODELS = {
 	openrouter: "mistralai/codestral-2508",
 } as const satisfies Record<Extract<ProviderName, "mistral" | "kilocode" | "openrouter">, string>
 
-export const SUPPORTED_AUTOCOMPLETE_PROVIDERS = Object.keys(
-	AUTOCOMPLETE_PROVIDER_MODELS,
-) as (keyof typeof AUTOCOMPLETE_PROVIDER_MODELS)[]
-
-export type SupportedAutocompleteProvider = (typeof SUPPORTED_AUTOCOMPLETE_PROVIDERS)[number]
-
 /**
  * ProviderSettingsEntry
  */

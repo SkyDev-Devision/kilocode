@@ -1,4 +1,4 @@
-import { SUPPORTED_AUTOCOMPLETE_PROVIDERS, AUTOCOMPLETE_PROVIDER_MODELS } from "@roo-code/types"
+import { AUTOCOMPLETE_PROVIDER_MODELS } from "@roo-code/types"
 import { ApiHandler, buildApiHandler } from "../../api"
 import { ProviderSettingsManager } from "../../core/config/ProviderSettingsManager"
 import { OpenRouterHandler } from "../../api/providers"
@@ -17,10 +17,9 @@ export class GhostModel {
 
 	public async reload(providerSettingsManager: ProviderSettingsManager) {
 		const profiles = await providerSettingsManager.listConfig()
+		const supportedProviders = Object.keys(AUTOCOMPLETE_PROVIDER_MODELS)
 		const validProfiles = profiles
-			.filter(
-				(x) => x.apiProvider && (SUPPORTED_AUTOCOMPLETE_PROVIDERS as readonly string[]).includes(x.apiProvider),
-			)
+			.filter((x) => x.apiProvider && x.apiProvider in AUTOCOMPLETE_PROVIDER_MODELS)
 			.sort((a, b) => {
 				if (!a.apiProvider) {
 					return 1
@@ -28,10 +27,7 @@ export class GhostModel {
 				if (!b.apiProvider) {
 					return -1
 				}
-				return (
-					(SUPPORTED_AUTOCOMPLETE_PROVIDERS as readonly string[]).indexOf(a.apiProvider) -
-					(SUPPORTED_AUTOCOMPLETE_PROVIDERS as readonly string[]).indexOf(b.apiProvider)
-				)
+				return supportedProviders.indexOf(a.apiProvider) - supportedProviders.indexOf(b.apiProvider)
 			})
 
 		const selectedProfile = validProfiles[0] || null
