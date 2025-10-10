@@ -1,4 +1,4 @@
-import { GhostServiceSettings } from "@roo-code/types"
+import { GhostServiceSettings, SUPPORTED_AUTOCOMPLETE_PROVIDERS } from "@roo-code/types"
 import { ApiHandler, buildApiHandler } from "../../api"
 import { ContextProxy } from "../../core/config/ContextProxy"
 import { ProviderSettingsManager } from "../../core/config/ProviderSettingsManager"
@@ -7,8 +7,6 @@ import { ApiStreamChunk } from "../../api/transform/stream"
 
 const KILOCODE_DEFAULT_MODEL = "mistralai/codestral-2508"
 const MISTRAL_DEFAULT_MODEL = "codestral-latest"
-
-export const SUPPORTED_AUTOCOMPLETE_PROVIDERS = ["mistral", "kilocode", "openrouter"]
 
 export class GhostModel {
 	private apiHandler: ApiHandler | null = null
@@ -24,17 +22,19 @@ export class GhostModel {
 	public async reload(settings: GhostServiceSettings, providerSettingsManager: ProviderSettingsManager) {
 		const profiles = await providerSettingsManager.listConfig()
 		const validProfiles = profiles
-			.filter((x) => x.apiProvider && SUPPORTED_AUTOCOMPLETE_PROVIDERS.includes(x.apiProvider))
+			.filter(
+				(x) => x.apiProvider && (SUPPORTED_AUTOCOMPLETE_PROVIDERS as readonly string[]).includes(x.apiProvider),
+			)
 			.sort((a, b) => {
 				if (!a.apiProvider) {
-					return 1 // Place undefined providers at the end
+					return 1
 				}
 				if (!b.apiProvider) {
-					return -1 // Place undefined providers at the beginning
+					return -1
 				}
 				return (
-					SUPPORTED_AUTOCOMPLETE_PROVIDERS.indexOf(a.apiProvider) -
-					SUPPORTED_AUTOCOMPLETE_PROVIDERS.indexOf(b.apiProvider)
+					(SUPPORTED_AUTOCOMPLETE_PROVIDERS as readonly string[]).indexOf(a.apiProvider) -
+					(SUPPORTED_AUTOCOMPLETE_PROVIDERS as readonly string[]).indexOf(b.apiProvider)
 				)
 			})
 

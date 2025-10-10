@@ -8,6 +8,7 @@ import {
 	type ProviderName,
 	type ProviderSettings,
 	DEFAULT_CONSECUTIVE_MISTAKE_LIMIT,
+	SUPPORTED_AUTOCOMPLETE_PROVIDERS,
 	openRouterDefaultModelId,
 	requestyDefaultModelId,
 	glamaDefaultModelId,
@@ -48,8 +49,6 @@ import { useAppTranslation } from "@src/i18n/TranslationContext"
 import { useRouterModels } from "@src/components/ui/hooks/useRouterModels"
 import { useSelectedModel } from "@src/components/ui/hooks/useSelectedModel"
 import { useExtensionState } from "@src/context/ExtensionStateContext"
-
-const SUPPORTED_AUTOCOMPLETE_PROVIDERS = ["mistral", "kilocode", "openrouter"]
 // kilocode_change start
 //import {
 //	useOpenRouterModelProviders,
@@ -493,7 +492,7 @@ const ApiOptions = ({
 				/>
 			</div>
 
-			{!SUPPORTED_AUTOCOMPLETE_PROVIDERS.includes(selectedProvider) && (
+			{!(SUPPORTED_AUTOCOMPLETE_PROVIDERS as readonly string[]).includes(selectedProvider) && (
 				<div className="flex items-start gap-2 p-2 rounded bg-vscode-inputValidation-warningBackground border border-vscode-inputValidation-warningBorder">
 					<span className="codicon codicon-warning text-vscode-inputValidation-warningForeground mt-0.5"></span>
 					<div className="text-sm text-vscode-inputValidation-warningForeground">
