@@ -34,18 +34,6 @@ import {
 
 export const DEFAULT_CONSECUTIVE_MISTAKE_LIMIT = 3
 
-export const AUTOCOMPLETE_PROVIDER_MODELS = {
-	mistral: "codestral-latest",
-	kilocode: "mistralai/codestral-2508",
-	openrouter: "mistralai/codestral-2508",
-} as const
-
-export const SUPPORTED_AUTOCOMPLETE_PROVIDERS = Object.keys(
-	AUTOCOMPLETE_PROVIDER_MODELS,
-) as (keyof typeof AUTOCOMPLETE_PROVIDER_MODELS)[]
-
-export type SupportedAutocompleteProvider = (typeof SUPPORTED_AUTOCOMPLETE_PROVIDERS)[number]
-
 /**
  * DynamicProvider
  *
@@ -170,6 +158,18 @@ export type ProviderName = z.infer<typeof providerNamesSchema>
 
 export const isProviderName = (key: unknown): key is ProviderName =>
 	typeof key === "string" && providerNames.includes(key as ProviderName)
+
+export const AUTOCOMPLETE_PROVIDER_MODELS = {
+	mistral: "codestral-latest",
+	kilocode: "mistralai/codestral-2508",
+	openrouter: "mistralai/codestral-2508",
+} as const satisfies Record<Extract<ProviderName, "mistral" | "kilocode" | "openrouter">, string>
+
+export const SUPPORTED_AUTOCOMPLETE_PROVIDERS = Object.keys(
+	AUTOCOMPLETE_PROVIDER_MODELS,
+) as (keyof typeof AUTOCOMPLETE_PROVIDER_MODELS)[]
+
+export type SupportedAutocompleteProvider = (typeof SUPPORTED_AUTOCOMPLETE_PROVIDERS)[number]
 
 /**
  * ProviderSettingsEntry
