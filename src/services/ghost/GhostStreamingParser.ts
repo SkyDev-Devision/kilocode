@@ -20,6 +20,9 @@ export interface ParsedChange {
  * Streaming XML parser for Ghost suggestions that can process incomplete responses
  * and emit suggestions as soon as complete <change> blocks are available
  */
+export const CHANGE_BLOCK_REGEX =
+	/<change>\s*<search>\s*<!\[CDATA\[([\s\S]*?)\]\]>\s*<\/search>\s*<replace>\s*<!\[CDATA\[([\s\S]*?)\]\]>\s*<\/replace>\s*<\/change>/g
+
 export class GhostStreamingParser {
 	private buffer: string = ""
 	private completedChanges: ParsedChange[] = []
@@ -112,9 +115,7 @@ export class GhostStreamingParser {
 		// Look for complete <change> blocks starting from where we left off
 		const searchText = this.buffer.substring(this.lastProcessedIndex)
 
-		// Updated regex to handle both single-line XML format and traditional format with whitespace
-		const changeRegex =
-			/<change>\s*<search>\s*<!\[CDATA\[([\s\S]*?)\]\]>\s*<\/search>\s*<replace>\s*<!\[CDATA\[([\s\S]*?)\]\]>\s*<\/replace>\s*<\/change>/g
+		const changeRegex = CHANGE_BLOCK_REGEX
 
 		let match
 		let lastMatchEnd = 0
