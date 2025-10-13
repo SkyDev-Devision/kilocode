@@ -1,8 +1,6 @@
 # kilo-code
 
-## 4.103.1
-
-### Patch Changes
+## [v4.103.1]
 
 - [#2962](https://github.com/Kilo-Org/kilocode/pull/2962) [`a424824`](https://github.com/Kilo-Org/kilocode/commit/a424824269b3cafdf58bcdb1acf7ed6151f32e0b) Thanks [@chrarnoldus](https://github.com/chrarnoldus)! - Improved the error message when an unsupported reasoning effort value is chosen
 
